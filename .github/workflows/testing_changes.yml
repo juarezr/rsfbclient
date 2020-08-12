@@ -133,7 +133,7 @@ jobs:
           # cargo tarpaulin --ignore-config --out Lcov Xml Html --run-types AllTargets -v --line --count --branch --features 'linking date_time pool' -- --test-threads 1
 
       - name: Coveralls Parallel
-        uses: coverallsapp/github-action@v1.1.1
+        uses: coverallsapp/github-action@v1.1.0
         if: matrix.build == 'linking'
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -145,17 +145,6 @@ jobs:
         run: |
           docker rm --volumes --force firebirdsql
           rm -f ./lcov.info
-
-  coverage:
-    name: coverage
-    needs: testing
-    runs-on: ubuntu-latest
-    steps:
-      - name: Coveralls Finished
-        uses: coverallsapp/github-action@v1.1.1
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          parallel-finished: true
 
   embedded:
     name: embedded
@@ -194,6 +183,34 @@ jobs:
         with:
           command: test
           args: --features '${{ matrix.features }}'
+
+      - name: Run cargo-tarpaulin
+        uses: actions-rs/tarpaulin@v0.1
+        with:
+          version: "latest"
+          run-types: "AllTargets"
+          out-type: "Lcov"
+          args: "-v --line --count --branch --features '${{ matrix.features }}' -- --test-threads 1"
+
+      - name: Coveralls Parallel
+        uses: coverallsapp/github-action@v1.1.0
+        if: matrix.build == 'linking'
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: "./lcov.info"
+          flag-name: run-${{ matrix.firebird }}-${{ matrix.build }}
+          parallel: true
+
+  coverage:
+    name: coverage
+    needs: [ testing, embedded ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Coveralls Finished
+        uses: coverallsapp/github-action@v1.1.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          parallel-finished: true
 
   security:
     name: security
