@@ -120,7 +120,7 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: test
-          args: --features '${{ matrix.features }} -- --test-threads 1'
+          args: --features '${{ matrix.features }}' -- --test-threads 1
 
       - name: Run cargo-tarpaulin
         uses: actions-rs/tarpaulin@v0.1
@@ -182,7 +182,7 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: test
-          args: --features '${{ matrix.features }} -- --test-threads 1'
+          args: --features '${{ matrix.features }}' -- --test-threads 1
 
       - name: Run cargo-tarpaulin
         uses: actions-rs/tarpaulin@v0.1
