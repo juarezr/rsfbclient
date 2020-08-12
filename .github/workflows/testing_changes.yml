@@ -195,4 +195,16 @@ jobs:
           command: test
           args: --features '${{ matrix.features }}'
 
+  security:
+    name: security
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+
+      - name: Run Security audit
+        uses: actions-rs/audit-check@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
 # end of file
