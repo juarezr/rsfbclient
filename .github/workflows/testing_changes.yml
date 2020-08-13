@@ -94,7 +94,7 @@ jobs:
       - name: Setup FirebirdSQL ${{ matrix.firebird }} on  ${{ matrix.plataform }} on server
         if: matrix.plataform == 'windows'
         run: |
-          choco install firebird -params '/SuperClassic'
+          choco install firebird -params '/SuperClassic /ClientAndDevTools'
 
       - name: Checkout sources
         uses: actions/checkout@v2
