@@ -105,10 +105,10 @@ jobs:
           $WinSysDir = [Environment]::SystemDirectory
           $CurDir = Get-Location
           $Dirs = @(
-              "C:\Program Files\Firebird\Firebird_3_0, 
+              "C:\Program Files\Firebird\Firebird_3_0", 
               [Environment]::SystemDirectory,
-              "C:\Program Files\Firebird\Firebird_4_0, 
-              "C:\Program Files\Firebird\Firebird_2_5, 
+              "C:\Program Files\Firebird\Firebird_4_0", 
+              "C:\Program Files\Firebird\Firebird_2_5", 
               )
           $Libs = @( 
               "fbclient_ms.lib", 
