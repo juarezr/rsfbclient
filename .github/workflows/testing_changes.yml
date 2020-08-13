@@ -101,27 +101,26 @@ jobs:
         shell: powershell
         run: |
           # Get-ChildItem -File -Recurse -Path "C:\Program Files\Firebird\Firebird_3_0" -Name
-          # "C:\Program Files\Firebird\Firebird_3_0\lib\fbclient_ms.lib"
           $WinSysDir = [Environment]::SystemDirectory
           $CurDir = Get-Location
-          $Dirs = @(
+           $Dirs = @(
               "C:\Program Files\Firebird\Firebird_3_0", 
-              [Environment]::SystemDirectory,
+              "${WinSysDir}",
               "C:\Program Files\Firebird\Firebird_4_0", 
-              "C:\Program Files\Firebird\Firebird_2_5", 
+              "C:\Program Files\Firebird\Firebird_2_5"
               )
           $Libs = @( 
               "fbclient_ms.lib", 
               "fbclient.lib", 
               "lib\fbclient_ms.lib", 
               "lib\fbclient.lib", 
-              "lib\fbclient_ms.lib", 
-              "lib\fbclient.lib" 
+              "WOW64\lib\fbclient_ms.lib", 
+              "WOW64\lib\fbclient.lib" 
               )
           Foreach ($dr in $Dirs) {
             Foreach ($lb in $Libs) {
-              if (!(Test-Path $Source -PathType Leaf)) {
-                $Source = Join-Path -Path $dr -ChildPath $lb
+              $Source = Join-Path -Path $dr -ChildPath $lb
+              if (Test-Path $Source -PathType Leaf) {
                 echo "Coying $Source to $CurDir"
                 Copy-Item -Path $Source -Destination $CurDir
                 return
