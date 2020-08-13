@@ -81,7 +81,7 @@ jobs:
     runs-on: "${{ matrix.os }}"
     needs: linting
     steps:
-      - name: Setup FirebirdSQL ${{ matrix.firebird }} with image  ${{ matrix.image }} on container
+      - name: Setup FirebirdSQL ${{ matrix.firebird }} with image  ${{ matrix.image }} on docker
         if: matrix.plataform == 'linux'
         uses: juarezr/firebirdsql-github-action@v1.0.0
         with:
@@ -91,10 +91,24 @@ jobs:
           firebird_password: "test_password"
           isc_password: "masterkey"
 
-      - name: Setup FirebirdSQL ${{ matrix.firebird }} on  ${{ matrix.plataform }} on server
+      - name: Setup FirebirdSQL ${{ matrix.firebird }} on  ${{ matrix.os }}
         if: matrix.plataform == 'windows'
         run: |
-          choco install firebird -params '/SuperClassic /ClientAndDevTools'
+          choco install firebird -params '/ClientAndDevTools'
+
+      - name: Copying fbclient.dll to Current Dir on ${{ matrix.os }} 
+        if: matrix.plataform == 'windows'
+        shell: powershell
+        run: |
+          echo "PATH: ${env:PATH}"
+          $Source = "C:\Program Files\Firebird\Firebird_3_0\bin\fbclient.dll"
+          if (!(Test-Path $Source -PathType Leaf)) {
+            $WinSysDir = [Environment]::SystemDirectory
+            $Source = Join-Path -Path $WinSysDir -ChildPath "fbclient.dll"            
+          }
+          $CurDir = Get-Location
+          echo "Coying $Source to $CurDir"
+          Copy-Item -Path $Source -Destination $CurDir
 
       - name: Checkout sources
         uses: actions/checkout@v2
