@@ -100,8 +100,9 @@ jobs:
         if: matrix.plataform == 'windows'
         shell: powershell
         run: |
-          echo "PATH: ${env:PATH}"
-          $Source = "C:\Program Files\Firebird\Firebird_3_0\bin\fbclient.dll"
+          # echo "PATH: ${env:PATH}"
+          Get-ChildItem -File -Recurse -Path "C:\Program Files\Firebird\Firebird_3_0" -Name
+          $Source = "C:\Program Files\Firebird\Firebird_3_0\lib\fbclient.lib"
           if (!(Test-Path $Source -PathType Leaf)) {
             $WinSysDir = [Environment]::SystemDirectory
             $Source = Join-Path -Path $WinSysDir -ChildPath "fbclient.dll"            
