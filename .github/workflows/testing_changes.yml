@@ -96,20 +96,40 @@ jobs:
         run: |
           choco install firebird -params '/ClientAndDevTools'
 
-      - name: Copying fbclient.dll to Current Dir on ${{ matrix.os }} 
+      - name: Copying fbclient.lib to Current Dir on ${{ matrix.os }} 
         if: matrix.plataform == 'windows'
         shell: powershell
         run: |
-          # echo "PATH: ${env:PATH}"
-          Get-ChildItem -File -Recurse -Path "C:\Program Files\Firebird\Firebird_3_0" -Name
-          $Source = "C:\Program Files\Firebird\Firebird_3_0\lib\fbclient.lib"
-          if (!(Test-Path $Source -PathType Leaf)) {
-            $WinSysDir = [Environment]::SystemDirectory
-            $Source = Join-Path -Path $WinSysDir -ChildPath "fbclient.dll"            
-          }
+          # Get-ChildItem -File -Recurse -Path "C:\Program Files\Firebird\Firebird_3_0" -Name
+          # "C:\Program Files\Firebird\Firebird_3_0\lib\fbclient_ms.lib"
+          $WinSysDir = [Environment]::SystemDirectory
           $CurDir = Get-Location
-          echo "Coying $Source to $CurDir"
-          Copy-Item -Path $Source -Destination $CurDir
+          $Dirs = @(
+              "C:\Program Files\Firebird\Firebird_3_0, 
+              [Environment]::SystemDirectory,
+              "C:\Program Files\Firebird\Firebird_4_0, 
+              "C:\Program Files\Firebird\Firebird_2_5, 
+              )
+          $Libs = @( 
+              "fbclient_ms.lib", 
+              "fbclient.lib", 
+              "lib\fbclient_ms.lib", 
+              "lib\fbclient.lib", 
+              "lib\fbclient_ms.lib", 
+              "lib\fbclient.lib" 
+              )
+          Foreach ($dr in $Dirs) {
+            Foreach ($lb in $Libs) {
+              if (!(Test-Path $Source -PathType Leaf)) {
+                $Source = Join-Path -Path $dr -ChildPath $lb
+                echo "Coying $Source to $CurDir"
+                Copy-Item -Path $Source -Destination $CurDir
+                return
+              }
+            }
+          }
+          echo "fbclient.lib not found !!!"
+          return 1
 
       - name: Checkout sources
         uses: actions/checkout@v2
