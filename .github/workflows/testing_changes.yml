@@ -103,9 +103,10 @@ jobs:
           # Get-ChildItem -File -Recurse -Path "C:\Program Files\Firebird\Firebird_3_0" -Name
           $WinSysDir = [Environment]::SystemDirectory
           $CurDir = Get-Location
-           $Dirs = @(
-              "C:\Program Files\Firebird\Firebird_3_0", 
+          $DestFile = Join-Path -Path $CurDir -ChildPath "fbclient.lib"
+          $Dirs = @(
               "${WinSysDir}",
+              "C:\Program Files\Firebird\Firebird_3_0", 
               "C:\Program Files\Firebird\Firebird_4_0", 
               "C:\Program Files\Firebird\Firebird_2_5"
               )
@@ -120,9 +121,10 @@ jobs:
           Foreach ($dr in $Dirs) {
             Foreach ($lb in $Libs) {
               $Source = Join-Path -Path $dr -ChildPath $lb
+              echo "Searching for $Source"
               if (Test-Path $Source -PathType Leaf) {
-                echo "Coying $Source to $CurDir"
-                Copy-Item -Path $Source -Destination $CurDir
+                echo "Coying $Source to $DestFile"
+                Copy-Item -Path $Source -Destination $DestFile
                 return
               }
             }
