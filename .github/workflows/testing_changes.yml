@@ -91,12 +91,12 @@ jobs:
           firebird_password: "test_password"
           isc_password: "masterkey"
 
-      - name: Setup FirebirdSQL ${{ matrix.firebird }} on  ${{ matrix.os }}
+      - name: Setup FirebirdSQL ${{ matrix.firebird }} on Windows
         if: matrix.plataform == 'windows'
         run: |
           choco install firebird -params '/ClientAndDevTools'
 
-      - name: Copying fbclient.lib to Current Dir on ${{ matrix.os }} 
+      - name: Locating fbclient.lib Dir on Windows
         if: matrix.plataform == 'windows'
         shell: powershell
         run: |
@@ -105,14 +105,14 @@ jobs:
                 [string]$FileName
             )
             $WinSysDir = [Environment]::SystemDirectory
-            $Dirs = @(
-                "${WinSysDir}",
+            $CommonDirs = @(
                 "C:\Program Files\Firebird\Firebird_3_0", 
                 "C:\Program Files\Firebird", 
-                "C:\Firebird"
+                "C:\Firebird",
+                "${WinSysDir}"
                 )
-            Foreach ($folder in $Dirs) {
-              $found = Get-ChildItem -File -Recurse -Path $folder -Include $FileName -Name -ea 0
+            Foreach ($folder in $CommonDirs) {
+              $found = Get-ChildItem -File -Recurse -Path $folder -Include $FileName -ea 0
               Foreach ($source in $found) {
                 echo "Found: $source"
                 # $CurDir = Get-Location
@@ -145,13 +145,13 @@ jobs:
           toolchain: stable
           default: true
 
-      - name: Install cli and development library
+      - name: Install cli and development library on Linux
         if: matrix.plataform == 'linux'
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends firebird3.0-utils firebird-dev
 
-      - name: Testing Connection and Query
+      - name: Testing Connection and Query on Linux
         if: matrix.firebird != 'v4' && matrix.plataform == 'linux'
         run: |
           SQL1='select RDB$CHARACTER_SET_NAME as charset_sysdba from rdb$database;' 
