@@ -29,25 +29,28 @@ fn search_on_linux() {
 }
 
 #[cfg(all(feature = "linking", target_os = "windows"))]
+use glob::glob;
+
+#[cfg(all(feature = "linking", target_os = "windows"))]
 fn search_on_windows() {
-    let fbclient_lib_names: [&str; 2] = ["fbclient.lib", "fbclient_ms.lib"];
-    for fbclient_lib in &fbclient_lib_names {
-        if let Some(found) = search_for_file(fbclient_lib) {
-            println!("cargo:rustc-link-search={}", found);
-            return;
-        }
+    if let Some(fbclient_lib) = search_for_file("fbclient.lib") {
+        let dir = found.parent().unwrap().to_str().unwrap();
+        println!("cargo:rustc-link-search={}", dir);
+        println!("cargo:rustc-link-lib=fbclient.lib");
+        return;
+    } else if let Some(fbclient_lib) = search_for_file("fbclient_ms.lib") {
+        let lib = found.unwrap().to_str().unwrap();
+        println!("cargo:rustc-link-lib={}", lib);
+        return;
     }
 }
 
 #[cfg(all(feature = "linking", target_os = "windows"))]
-use glob::glob;
-
-#[cfg(all(feature = "linking", target_os = "windows"))]
-fn search_for_file(filename: &str) -> Option<String> {
+fn search_for_file(filename: &str) -> Option<std::path::PathBuf> {
     // https://kornel.ski/rust-sys-crate#find
 
     let firebird_install_dirs: [&str; 5] = [
-        "C:\\Program Files\\Firebird\\Firebird_3_0",
+        "C:\\Program Files\\Firebird\\Firebird_3_0\\lib",
         "C:\\Program Files\\Firebird\\Firebird*",
         "C:\\Firebird*",
         "D:\\Firebird*",
@@ -61,8 +64,7 @@ fn search_for_file(filename: &str) -> Option<String> {
         for entry in found {
             if let Ok(path) = entry {
                 if path.is_file() {
-                    let dir = path.parent().unwrap().to_str().unwrap();
-                    return Some(dir.to_string());
+                    return Some(path);
                 }
             }
         }
