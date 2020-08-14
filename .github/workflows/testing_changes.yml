@@ -159,19 +159,18 @@ jobs:
           function Execute-ODBC-Query{
             param(
               [string]$Query=$(throw 'query is required.'),
-              [string]$ConnectionString=$(throw 'query is required.')
+              [string]$DSN=$(throw 'DSN is required.')
             )
             $conn = New-Object System.Data.Odbc.OdbcConnection
-            $conn.ConnectionString= $ConnectionString
+            $conn.ConnectionString= "DSN=$DSN;"
             $cmd = new-object System.Data.Odbc.OdbcCommand($Query,$conn)
             $conn.open()
             $cmd.ExecuteNonQuery()
             $conn.close()
           }
           # executing on local firebird
-          $odbc = "Driver={Red Database/Firebird driver};Server=localhost;Port=3060;Uid=SYSDBA;Pwd=masterkey"
-          $query = "create database test.fdb"
-          Execute-ODBC-Query -Query $query -ConnectionString $odbc
+          Add-OdbcDsn -Name "odbcfirebird" -DriverName "Firebird/InterBase(r) driver" -DsnType "System" -SetPropertyValue @("DBNAME=localhost:3050", "USER=SYSDBA", "PASSWORD=masterkey")
+          Execute-ODBC-Query -Query "create database test.fdb" -DSN "odbcfirebird"
 
       - name: Testing Connection and Query on Linux
         if: matrix.firebird != 'v4' && matrix.plataform == 'linux'
