@@ -16,12 +16,12 @@ fn search_on_environment_var() -> bool {
 
     if let Ok(user_specified_dir) = std::env::var("FBCLIENT_LIB_DIR") {
         println!("cargo:rustc-link-search={}", user_specified_dir);
-        return false;
+       return false;
     }
-    return true;
+    true
 }
 
-#[cfg(all(feature = "linking", target_os = "linux"))]
+// #[cfg(all(feature = "linking", target_os = "linux"))]
 fn search_on_linux() {
     // https://doc.rust-lang.org/rustc/command-line-arguments.html#option-l-link-lib
 
@@ -37,11 +37,9 @@ fn search_on_windows() {
         let dir = fbclient_lib.parent().unwrap().to_str().unwrap();
         println!("cargo:rustc-link-search={}", dir);
         println!("cargo:rustc-link-lib=fbclient.lib");
-        return;
     } else if let Some(fbclient_ms_lib) = search_for_file("fbclient_ms.lib") {
         let lib = fbclient_ms_lib.to_str().unwrap();
         println!("cargo:rustc-link-lib={}", lib);
-        return;
     }
 }
 
@@ -69,7 +67,7 @@ fn search_for_file(filename: &str) -> Option<std::path::PathBuf> {
             }
         }
     }
-    return None;
+    None
 }
 
 // end of code
