@@ -16,12 +16,12 @@ fn search_on_environment_var() -> bool {
 
     if let Ok(user_specified_dir) = std::env::var("FBCLIENT_LIB_DIR") {
         println!("cargo:rustc-link-search={}", user_specified_dir);
-       return false;
+        return false;
     }
     true
 }
 
-// #[cfg(all(feature = "linking", target_os = "linux"))]
+#[cfg(all(feature = "linking", target_os = "linux"))]
 fn search_on_linux() {
     // https://doc.rust-lang.org/rustc/command-line-arguments.html#option-l-link-lib
 
@@ -33,14 +33,20 @@ use glob::glob;
 
 #[cfg(all(feature = "linking", target_os = "windows"))]
 fn search_on_windows() {
-    if let Some(fbclient_lib) = search_for_file("fbclient.lib") {
+    if search_on_windows_for_lib("fbclient", "fbclient.lib") {
+        search_on_windows_for_lib("fbclient_ms", "fbclient_ms.lib");
+    }
+}
+
+#[cfg(all(feature = "linking", target_os = "windows"))]
+fn search_on_windows_for_lib(libname: &str, filename: &str) -> bool {
+    if let Some(fbclient_lib) = search_for_file(filename) {
         let dir = fbclient_lib.parent().unwrap().to_str().unwrap();
         println!("cargo:rustc-link-search={}", dir);
-        println!("cargo:rustc-link-lib=fbclient.lib");
-    } else if let Some(fbclient_ms_lib) = search_for_file("fbclient_ms.lib") {
-        let lib = fbclient_ms_lib.to_str().unwrap();
-        println!("cargo:rustc-link-lib={}", lib);
+        println!("cargo:rustc-link-lib=dylib={}", libname);
+        return true;
     }
+    false
 }
 
 #[cfg(all(feature = "linking", target_os = "windows"))]
