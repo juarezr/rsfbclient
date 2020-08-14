@@ -166,7 +166,7 @@ jobs:
       - name: Run cargo build
         uses: actions-rs/cargo@v1
         with:
-          command: test
+          command: build
           args: -vv --features '${{ matrix.features }}'
           # Searching for fbclient.lib in rsfbclient-native/build.rs
 
