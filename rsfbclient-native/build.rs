@@ -4,7 +4,7 @@ fn main() {
     if search_on_environment_var() {
         #[cfg(all(feature = "linking", target_os = "linux"))]
         search_on_linux();
-    
+
         #[cfg(all(feature = "linking", target_os = "windows"))]
         search_on_windows();
     }
@@ -30,12 +30,12 @@ fn search_on_linux() {
 
 #[cfg(all(feature = "linking", target_os = "windows"))]
 fn search_on_windows() {
-    let fbclient_lib_names: [&str; 2] = [ "fbclient.lib", "fbclient_ms.lib"];
+    let fbclient_lib_names: [&str; 2] = ["fbclient.lib", "fbclient_ms.lib"];
     for fbclient_lib in &fbclient_lib_names {
         if let Some(found) = search_for_file(fbclient_lib) {
             println!("cargo:rustc-link-lib=dylib={}", found);
             return;
-        } 
+        }
     }
 }
 
@@ -44,7 +44,6 @@ use glob::glob;
 
 #[cfg(all(feature = "linking", target_os = "windows"))]
 fn search_for_file(filename: &str) -> Option<String> {
-
     // https://kornel.ski/rust-sys-crate#find
 
     let firebird_install_dirs: [&str; 5] = [
@@ -71,4 +70,4 @@ fn search_for_file(filename: &str) -> Option<String> {
     return None;
 }
 
-// end of code 
+// end of code
