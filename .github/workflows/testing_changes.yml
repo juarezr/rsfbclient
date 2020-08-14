@@ -154,7 +154,7 @@ jobs:
       - name: Create database test.fdb in fb ${{ matrix.firebird }} on Windows
         if: matrix.plataform == 'windows'
         run: |
-          echo 'CREATE DATABASE test.fdb' | C:\Program Files\Firebird\Firebird_3_0\bin\isql -bail -quiet -z -user SYSDBA -password masterkey 'localhost'
+          echo 'CREATE DATABASE test.fdb' | "C:\Program Files\Firebird\Firebird_3_0\bin\isql.exe" -bail -quiet -z -user SYSDBA -password masterkey 'localhost'
 
       - name: Testing Connection and Query on Linux
         if: matrix.firebird != 'v4' && matrix.plataform == 'linux'
