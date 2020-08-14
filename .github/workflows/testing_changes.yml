@@ -107,7 +107,8 @@ jobs:
             )
             $WinSysDir = [Environment]::SystemDirectory
             $CurDir = Get-Location
-            $DestFile = Join-Path -Path $CurDir -ChildPath $FileName
+            $DestDir = Join-Path -Path $CurDir -ChildPath "target\debug\deps"
+            $DestFile = Join-Path -Path $DestDir -ChildPath $FileName
             $Dirs = @(
                 "${WinSysDir}",
                 "C:\Program Files\Firebird\Firebird_3_0", 
@@ -125,21 +126,22 @@ jobs:
                 $folder = Join-Path -Path $prefix -ChildPath $infix
                 Foreach ($suffix in $Files) {
                   $Source = Join-Path -Path $folder -ChildPath $suffix
-                  echo "Searching for $Source"
+                  echo "Searched for $Source"
                   if (Test-Path $Source -PathType Leaf) {
                     echo "Coying $Source to $DestFile"
+                    New-Item $DestDir -ItemType Directory -ea 0
                     Copy-Item -Path $Source -Destination $DestFile
                     return
                   }
                 }
               }
             }
-            echo "File $FileName not found !!!"
+            echo "File $FileName not copied to $DesdtDir !!!"
           }
           $Libs = @( "fbclient_ms.lib", "fbclient.lib" )
           $Dlls = @( "fbclient.dll" )
-          Find-Copy -Files $Libs -FileName "target\debug\deps\fbclient.lib"
-          Find-Copy -Files $Dlls -FileName "target\debug\deps\fbclient.dll"
+          Find-Copy -Files $Libs -FileName "fbclient.lib"
+          Find-Copy -Files $Dlls -FileName "fbclient.dll"
 
       - name: Checkout sources
         uses: actions/checkout@v2
