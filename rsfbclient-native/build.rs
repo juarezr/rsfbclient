@@ -33,7 +33,7 @@ fn search_on_windows() {
     let fbclient_lib_names: [&str; 2] = ["fbclient.lib", "fbclient_ms.lib"];
     for fbclient_lib in &fbclient_lib_names {
         if let Some(found) = search_for_file(fbclient_lib) {
-            println!("cargo:rustc-link-lib=dylib={}", found);
+            println!("cargo:rustc-link-search={}", found);
             return;
         }
     }
@@ -61,8 +61,8 @@ fn search_for_file(filename: &str) -> Option<String> {
         for entry in found {
             if let Ok(path) = entry {
                 if path.is_file() {
-                    let fp = path.to_str().unwrap();
-                    return Some(fp.to_string());
+                    let dir = path.parent().unwrap().to_str().unwrap();
+                    return Some(dir.to_string());
                 }
             }
         }
