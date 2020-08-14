@@ -33,8 +33,15 @@ use glob::glob;
 
 #[cfg(all(feature = "linking", target_os = "windows"))]
 fn search_on_windows() {
-    if search_on_windows_for_lib("fbclient", "fbclient.lib") {
-        search_on_windows_for_lib("fbclient_ms", "fbclient_ms.lib");
+    let def_fbclient_lib = "C:\\Program Files\\Firebird\\Firebird_3_0\\lib\\fbclient_ms.lib";
+    let fb3_lib_path = std::path::Path::new(def_fbclient_lib);
+    if fb3_lib_path.exists() {
+        println!("cargo:rustc-link-search=C:\\Program Files\\Firebird\\Firebird_3_0\\lib");
+        println!("cargo:rustc-link-lib=dylib=fbclient_ms");
+    } else if search_on_windows_for_lib("fbclient", "fbclient.lib") {
+        if search_on_windows_for_lib("fbclient_ms", "fbclient_ms.lib") {
+            println!("warning:fbclient.lib not found!");
+        }
     }
 }
 
