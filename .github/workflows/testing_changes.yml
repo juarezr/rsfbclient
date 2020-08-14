@@ -95,6 +95,7 @@ jobs:
         if: matrix.plataform == 'windows'
         run: |
           choco install firebird -params '/SuperClassic'
+          choco install firebird-odbc
 
       - name: Locating fbclient.lib Dir on Windows
         if: matrix.plataform == 'windows'
@@ -153,8 +154,24 @@ jobs:
 
       - name: Create database test.fdb in fb ${{ matrix.firebird }} on Windows
         if: matrix.plataform == 'windows'
+        shell: powershell
         run: |
-          echo 'CREATE DATABASE test.fdb' | "C:\Program Files\Firebird\Firebird_3_0\bin\isql.exe -bail -quiet -z -user SYSDBA -password masterkey localhost"
+          function Execute-ODBC-Query{
+            param(
+              [string]$Query=$(throw 'query is required.'),
+              [string]$ConnectionString=$(throw 'query is required.')
+            )
+            $conn = New-Object System.Data.Odbc.OdbcConnection
+            $conn.ConnectionString= $ConnectionString
+            $cmd = new-object System.Data.Odbc.OdbcCommand($Query,$conn)
+            $conn.open()
+            $cmd.ExecuteNonQuery()
+            $conn.close()
+          }
+          # executing on local firebird
+          $odbc = "Driver={Red Database/Firebird driver};Server=localhost;Port=3060;Uid=SYSDBA;Pwd=masterkey"
+          $query = "create database test.fdb"
+          Execute-ODBC-Query -Query $query -ConnectionString $odbc
 
       - name: Testing Connection and Query on Linux
         if: matrix.firebird != 'v4' && matrix.plataform == 'linux'
