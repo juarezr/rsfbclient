@@ -94,7 +94,7 @@ jobs:
       - name: Setup FirebirdSQL ${{ matrix.firebird }} on Windows
         if: matrix.plataform == 'windows'
         run: |
-          choco install firebird -params '/ClientAndDevTools'
+          choco install firebird -params '/SuperClassic'
 
       - name: Locating fbclient.lib Dir on Windows
         if: matrix.plataform == 'windows'
@@ -150,6 +150,11 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends firebird3.0-utils firebird-dev
+
+      - name: Create database test.fdb in fb ${{ matrix.firebird }} on Windows
+        if: matrix.plataform == 'windows'
+        run: |
+          echo 'CREATE DATABASE test.fdb' | C:\Program Files\Firebird\Firebird_3_0\bin\isql -bail -quiet -z -user SYSDBA -password masterkey 'localhost'
 
       - name: Testing Connection and Query on Linux
         if: matrix.firebird != 'v4' && matrix.plataform == 'linux'
