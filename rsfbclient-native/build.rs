@@ -34,12 +34,12 @@ use glob::glob;
 #[cfg(all(feature = "linking", target_os = "windows"))]
 fn search_on_windows() {
     if let Some(fbclient_lib) = search_for_file("fbclient.lib") {
-        let dir = found.parent().unwrap().to_str().unwrap();
+        let dir = fbclient_lib.parent().unwrap().to_str().unwrap();
         println!("cargo:rustc-link-search={}", dir);
         println!("cargo:rustc-link-lib=fbclient.lib");
         return;
-    } else if let Some(fbclient_lib) = search_for_file("fbclient_ms.lib") {
-        let lib = found.unwrap().to_str().unwrap();
+    } else if let Some(fbclient_ms_lib) = search_for_file("fbclient_ms.lib") {
+        let lib = fbclient_ms_lib.to_str().unwrap();
         println!("cargo:rustc-link-lib={}", lib);
         return;
     }
