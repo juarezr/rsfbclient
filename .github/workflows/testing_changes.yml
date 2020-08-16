@@ -128,6 +128,7 @@ jobs:
           Search-Common-Folders -FileName "fbclient.dll"
           Search-Common-Folders -FileName "fbclient.lib"
           Search-Common-Folders -FileName "fbclient_ms.lib"
+          Search-Common-Folders -FileName "isql.exe"
 
       - name: Checkout sources
         uses: actions/checkout@v2
@@ -155,7 +156,7 @@ jobs:
       - name: Create database test.fdb in fb ${{ matrix.firebird }} on Windows
         if: matrix.plataform == 'windows'
         run: |
-          echo 'CREATE DATABASE test.fdb' | & "C:\Program Files\Firebird\Firebird_3_0\bin\isql.exe" -bail -quiet -z -user SYSDBA -password masterkey 'localhost'
+          echo 'CREATE DATABASE test.fdb' | & "C:\Program Files\Firebird\Firebird_3_0\isql.exe" -bail -quiet -z -user SYSDBA -password masterkey 'localhost'
 
       # - name: Create database test.fdb in fb ${{ matrix.firebird }} on Windows
       #   if: matrix.plataform == 'windows'
