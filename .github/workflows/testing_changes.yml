@@ -107,7 +107,6 @@ jobs:
             )
             $WinSysDir = [Environment]::SystemDirectory
             $CommonDirs = @(
-                "C:\Program Files\Firebird\Firebird_3_0", 
                 "C:\Program Files\Firebird", 
                 "C:\Firebird",
                 "${WinSysDir}"
@@ -156,7 +155,7 @@ jobs:
       - name: Create database test.fdb in fb ${{ matrix.firebird }} on Windows
         if: matrix.plataform == 'windows'
         run: |
-          echo 'CREATE DATABASE test.fdb' | & "C:\Program Files\Firebird\Firebird_3_0\isql.exe" -bail -quiet -z -user SYSDBA -password masterkey 'localhost'
+          echo "CREATE DATABASE 'localhost:test.fdb';" | & "C:\Program Files\Firebird\Firebird_3_0\isql.exe" -bail -quiet -z -user SYSDBA -password masterkey
 
       # - name: Create database test.fdb in fb ${{ matrix.firebird }} on Windows
       #   if: matrix.plataform == 'windows'
