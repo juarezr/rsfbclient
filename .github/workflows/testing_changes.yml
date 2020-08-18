@@ -67,10 +67,10 @@ jobs:
           - os: "macos-latest" 
             firebird: [v2, v4]
         include:
-          - os: "ubuntu-20.04"
-            plataform: linux
-          - os: "windows-latest"
-            plataform: windows
+          # - os: "ubuntu-20.04"
+          #   plataform: linux
+          # - os: "windows-latest"
+          #   plataform: windows
           - os: "macos-latest"
             plataform: macos
           - firebird: v2
