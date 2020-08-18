@@ -33,12 +33,12 @@ fn search_on_linux() {
 
 #[cfg(all(feature = "linking", target_os = "macos"))]
 fn search_on_macos() {
-    let def_fbclient_lib = "/usr/local/lib/libfbclient.dylib";
+    let def_fbclient_sys = "/usr/local/lib/libfbclient.dylib";
     let fb3_lib_path_sys = std::path::Path::new(def_fbclient_sys);
     if fb3_lib_path_sys.exists() {
         println!("cargo:rustc-link-search=/usr/local/lib/");
     } 
-    let def_fbclient_sys = "/Library/Frameworks/Firebird.framework/Versions/A/Libraries/libfbclient.dylib";
+    let def_fbclient_lib = "/Library/Frameworks/Firebird.framework/Versions/A/Libraries/libfbclient.dylib";
     let fb3_lib_path_lib = std::path::Path::new(def_fbclient_lib);
     if fb3_lib_path_lib.exists() {
         println!("cargo:rustc-link-search=/Library/Frameworks/Firebird.framework/Versions/A/Libraries/");
