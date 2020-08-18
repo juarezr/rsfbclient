@@ -55,7 +55,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ "ubuntu-20.04", "windows-latest" ]
+        os: [ "ubuntu-20.04", "windows-latest", "macos-latest" ]
         firebird: [v3, v2, v4]
         build: [linking, dynamic_loading]
         exclude:
@@ -63,11 +63,15 @@ jobs:
             firebird: v2
           - os: "windows-latest" 
             firebird: v4
+          - os: "macos-latest" 
+            firebird: [v2, v4]
         include:
           - os: "ubuntu-20.04"
             plataform: linux
           - os: "windows-latest"
             plataform: windows
+          - os: "macos-latest"
+            plataform: macos
           - firebird: v2
             image: "2.5-ss"
           - firebird: v3
@@ -95,6 +99,17 @@ jobs:
         if: matrix.plataform == 'windows'
         run: |
           choco install firebird -params '/SuperClassic'
+
+      - name: Setup FirebirdSQL ${{ matrix.firebird }} on MacOSX
+        if: matrix.plataform == 'macos'
+        shell: bash
+        run: |
+          wget https://github.com/FirebirdSQL/firebird/releases/download/R3_0_6/Firebird-3.0.6-33328-x86_64.pkg /tmp
+          ls -l /
+          sudo installer -verbose -pkg /tmp/Firebird-3.0.6-33328-x86_64.pkg -target /
+          ls -l /
+          ls -l /Library/Frameworks/
+          sudo ln -s /Library/Frameworks/Firebird.framework/Versions/A/Firebird /usr/local/lib/libfbclient.dylib
 
       - name: Locating fbclient.lib Dir on Windows
         if: matrix.plataform == 'windows'
@@ -150,6 +165,12 @@ jobs:
         if: matrix.plataform == 'windows'
         run: |
           echo "CREATE DATABASE 'localhost:test.fdb';" | & "C:\Program Files\Firebird\Firebird_3_0\isql.exe" -bail -quiet -z -user SYSDBA -password masterkey
+
+      - name: Create database test.fdb in fb ${{ matrix.firebird }} on MacOSX
+        if: matrix.plataform == 'macos'
+        run: |
+          # All the standard command line executables are installed in /Library/Frameworks/Firebird.framework/Resources/bin
+          echo "CREATE DATABASE 'localhost:test.fdb';" | /Library/Frameworks/Firebird.framework/Resources/bin/isql -bail -quiet -z -user SYSDBA -password masterkey
 
       - name: Testing Connection and Query on Linux
         if: matrix.firebird != 'v4' && matrix.plataform == 'linux'
