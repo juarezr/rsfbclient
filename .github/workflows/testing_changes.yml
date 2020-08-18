@@ -193,7 +193,7 @@ jobs:
 
       - name: Run cargo test
         uses: actions-rs/cargo@v1
-        if: matrix.plataform != 'macos' or matrix.build != 'linking'
+        if: matrix.plataform != 'macos' || matrix.build != 'linking'
         with:
           command: test
           args: -vv --no-default-features --features '${{ matrix.features }}' -- --test-threads 1
