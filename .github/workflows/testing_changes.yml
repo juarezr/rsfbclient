@@ -184,6 +184,7 @@ jobs:
 
       - name: Run cargo build
         uses: actions-rs/cargo@v1
+        if: matrix.plataform != 'macos'
         with:
           command: build
           args: -vv --no-default-features --features '${{ matrix.features }}'
