@@ -240,7 +240,7 @@ jobs:
 
   embedded:
     name: embedded
-    needs: linting
+    # needs: linting
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -278,7 +278,7 @@ jobs:
 
   security:
     name: security
-    needs: linting
+    # needs: linting
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
