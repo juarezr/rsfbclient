@@ -35,7 +35,7 @@ fn search_on_linux() {
 #[cfg(all(feature = "linking", target_os = "macos"))]
 fn search_on_macos() {
 
-    println!("cargo:rustc-link-lib=dylib=fbclient");
+    println!("cargo:rustc-link-lib=dylib=libfbclient.dylib");
 }
 
 #[cfg(all(feature = "linking", target_os = "windows"))]
