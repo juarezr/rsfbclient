@@ -104,7 +104,7 @@ jobs:
         if: matrix.plataform == 'macos'
         shell: bash
         run: |
-          wget https://github.com/FirebirdSQL/firebird/releases/download/R3_0_6/Firebird-3.0.6-33328-x86_64.pkg /tmp
+          wget https://github.com/FirebirdSQL/firebird/releases/download/R3_0_6/Firebird-3.0.6-33328-x86_64.pkg -O /tmp/firebird.pkg
           ls -l /
           sudo installer -verbose -pkg /tmp/Firebird-3.0.6-33328-x86_64.pkg -target /
           ls -l /
