@@ -198,7 +198,7 @@ jobs:
 
       - name: Run cargo-tarpaulin
         uses: actions-rs/tarpaulin@v0.1
-        if: matrix.plataform == 'linux'
+        if: matrix.plataform == 'linux' || matrix.plataform == 'macos'
         # TODO: #[error]The process 'C:\Rust\.cargo\bin\cargo.exe' failed with exit code 101: error: no such subcommand: `tarpaulin`
         with:
           version: "latest"
@@ -208,7 +208,7 @@ jobs:
 
       - name: Coveralls Parallel
         uses: coverallsapp/github-action@master
-        if: matrix.plataform == 'linux'
+        if: matrix.plataform == 'linux' || matrix.plataform == 'macos'
         env:
           COVERALLS_FLAG_NAME: run-${{ matrix.firebird }}-${{ matrix.build }}
         with:
