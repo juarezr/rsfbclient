@@ -5,6 +5,9 @@ fn main() {
         #[cfg(all(feature = "linking", target_os = "linux"))]
         search_on_linux();
 
+        #[cfg(all(feature = "linking", target_os = "macos"))]
+        search_on_macos();
+
         #[cfg(all(feature = "linking", target_os = "windows"))]
         search_on_windows();
     }
@@ -24,6 +27,13 @@ fn search_on_environment_var() -> bool {
 #[cfg(all(feature = "linking", target_os = "linux"))]
 fn search_on_linux() {
     // https://doc.rust-lang.org/rustc/command-line-arguments.html#option-l-link-lib
+
+    println!("cargo:rustc-link-lib=dylib=fbclient");
+    // println!("cargo:rustc-link-lib=framework=Firebird.framework");
+}
+
+#[cfg(all(feature = "linking", target_os = "macos"))]
+fn search_on_macos() {
 
     println!("cargo:rustc-link-lib=dylib=fbclient");
 }
