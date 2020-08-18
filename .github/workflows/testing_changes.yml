@@ -22,40 +22,41 @@ jobs:
       - name: Checkout sources
         uses: actions/checkout@v2
 
-      - name: Install stable toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: default
-          toolchain: stable
-          default: true
-          override: true
-          components: rustfmt, clippy
+      # - name: Install stable toolchain
+      #   uses: actions-rs/toolchain@v1
+      #   with:
+      #     profile: default
+      #     toolchain: stable
+      #     default: true
+      #     override: true
+      #     components: rustfmt, clippy
 
-      - name: Run cargo build
-        uses: actions-rs/cargo@v1
-        with:
-          command: check
-          args: --verbose
+      # - name: Run cargo build
+      #   uses: actions-rs/cargo@v1
+      #   with:
+      #     command: check
+      #     args: --verbose
 
-      - name: Run cargo clippy
-        uses: actions-rs/clippy-check@v1
-        continue-on-error: true # show all errors
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          args: --all-features
+      # - name: Run cargo clippy
+      #   uses: actions-rs/clippy-check@v1
+      #   continue-on-error: true # show all errors
+      #   with:
+      #     token: ${{ secrets.GITHUB_TOKEN }}
+      #     args: --all-features
 
-      - name: Run cargo fmt
-        uses: actions-rs/cargo@v1
-        with:
-          command: fmt
-          args: --all -- --check
+      # - name: Run cargo fmt
+      #   uses: actions-rs/cargo@v1
+      #   with:
+      #     command: fmt
+      #     args: --all -- --check
 
   testing:
     name: testing
     strategy:
       fail-fast: false
       matrix:
-        os: [ "ubuntu-20.04", "windows-latest", "macos-latest" ]
+        # os: [ "ubuntu-20.04", "windows-latest", "macos-latest" ]
+        os: [ "macos-latest" ]
         firebird: [v3, v2, v4]
         build: [linking, dynamic_loading]
         exclude:
