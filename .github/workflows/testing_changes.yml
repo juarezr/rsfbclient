@@ -107,7 +107,7 @@ jobs:
         run: |
           wget https://github.com/FirebirdSQL/firebird/releases/download/R3_0_6/Firebird-3.0.6-33328-x86_64.pkg -O /tmp/firebird.pkg
           ls -l /
-          sudo installer -verbose -pkg /tmp/Firebird-3.0.6-33328-x86_64.pkg -target /
+          sudo installer -verbose -pkg /tmp/firebird.pkg -target /
           ls -l /
           ls -l /Library/Frameworks/
           sudo ln -s /Library/Frameworks/Firebird.framework/Versions/A/Firebird /usr/local/lib/libfbclient.dylib
