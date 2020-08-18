@@ -11,7 +11,10 @@ fn main() {
         #[cfg(all(feature = "linking", target_os = "windows"))]
         search_on_windows();
     }
+    println!("cargo:rerun-if-env-changed=PROFILE");
+    println!("cargo:rerun-if-env-changed=TARGET");
     println!("cargo:rerun-if-changed=build.rs");
+    println!("cargo:rerun-if-changed=src/tests/mod.rs");
 }
 
 fn search_on_environment_var() -> bool {
