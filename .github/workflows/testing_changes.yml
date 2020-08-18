@@ -5,50 +5,52 @@
 #   - https://github.com/actions-rs/toolchain   -> https://github.com/marketplace/actions/rust-toolchain
 #   - https://github.com/actions-rs/cargo       -> https://github.com/marketplace/actions/rust-cargo
 #
-# for simplicity we are checking compilation and testing everything on the Ubuntu environment only.
-#
 # TODO:
-#   - Run in arm little-endian architecture
+#   - Run tests in arm little-endian architecture (travis-ci?)
+#   - Test cross compilation to many arch (E.g ripgrep)
+#   - cargo tarpaulin does not work on windows
+#   - cargo tarpaulin does not work on macos
+#   - cargo test fails with linking on macos
 
 on: [push, pull_request]
 
 name: testing_changes
 
 jobs:
-  # linting:
-  #   name: linting
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout sources
-  #       uses: actions/checkout@v2
+  linting:
+    name: linting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
 
-  #     - name: Install stable toolchain
-  #       uses: actions-rs/toolchain@v1
-  #       with:
-  #         profile: default
-  #         toolchain: stable
-  #         default: true
-  #         override: true
-  #         components: rustfmt, clippy
+      - name: Install stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: default
+          toolchain: stable
+          default: true
+          override: true
+          components: rustfmt, clippy
 
-  #     - name: Run cargo build
-  #       uses: actions-rs/cargo@v1
-  #       with:
-  #         command: check
-  #         args: --verbose
+      - name: Run cargo build
+        uses: actions-rs/cargo@v1
+        with:
+          command: check
+          args: --verbose
 
-  #     - name: Run cargo clippy
-  #       uses: actions-rs/clippy-check@v1
-  #       continue-on-error: true # show all errors
-  #       with:
-  #         token: ${{ secrets.GITHUB_TOKEN }}
-  #         args: --all-features
+      - name: Run cargo clippy
+        uses: actions-rs/clippy-check@v1
+        continue-on-error: true # show all errors
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          args: --all-features
 
-  #     - name: Run cargo fmt
-  #       uses: actions-rs/cargo@v1
-  #       with:
-  #         command: fmt
-  #         args: --all -- --check
+      - name: Run cargo fmt
+        uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+          args: --all -- --check
 
   testing:
     name: testing
@@ -85,7 +87,7 @@ jobs:
           - build: dynamic_loading
             features: dynamic_loading date_time pool
     runs-on: "${{ matrix.os }}"
-    # needs: linting
+    needs: linting
     steps:
       - name: Setup FirebirdSQL ${{ matrix.firebird }} with image  ${{ matrix.image }} on docker
         if: matrix.plataform == 'linux'
@@ -191,6 +193,7 @@ jobs:
 
       - name: Run cargo test
         uses: actions-rs/cargo@v1
+        if: matrix.plataform != 'macos' or matrix.build != 'linking'
         with:
           command: test
           args: -vv --no-default-features --features '${{ matrix.features }}' -- --test-threads 1
@@ -198,7 +201,7 @@ jobs:
 
       - name: Run cargo-tarpaulin
         uses: actions-rs/tarpaulin@v0.1
-        if: matrix.plataform == 'linux' || matrix.plataform == 'macos'
+        if: matrix.plataform == 'linux'
         # TODO: #[error]The process 'C:\Rust\.cargo\bin\cargo.exe' failed with exit code 101: error: no such subcommand: `tarpaulin`
         with:
           version: "latest"
@@ -208,7 +211,7 @@ jobs:
 
       - name: Coveralls Parallel
         uses: coverallsapp/github-action@master
-        if: matrix.plataform == 'linux' || matrix.plataform == 'macos'
+        if: matrix.plataform == 'linux'
         env:
           COVERALLS_FLAG_NAME: run-${{ matrix.firebird }}-${{ matrix.build }}
         with:
@@ -236,7 +239,7 @@ jobs:
 
   embedded:
     name: embedded
-    # needs: linting
+    needs: linting
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -274,7 +277,7 @@ jobs:
 
   security:
     name: security
-    # needs: linting
+    needs: linting
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
