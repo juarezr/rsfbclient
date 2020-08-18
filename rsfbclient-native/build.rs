@@ -43,7 +43,8 @@ fn search_on_macos() {
     if fb3_lib_path_lib.exists() {
         println!("cargo:rustc-link-search=/Library/Frameworks/Firebird.framework/Versions/A/Libraries/");
     }
-    println!("cargo:rustc-link-lib=dylib=libfbclient.dylib");
+    println!("cargo:rustc-link-lib=dylib=libfbclient");
+    // println!("cargo:rustc-link-lib=dylib=libfbclient.dylib");
     // println!("cargo:rustc-link-lib=framework=Firebird.framework");
 }
 
